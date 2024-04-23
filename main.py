@@ -32,6 +32,25 @@ async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Op
     data, count = supabase.table('FileInfo').insert({"NewTitle": newTitle, "NewSubtitle": newSubTitle}).execute()
 
 
+@app.post("/generateBegin/")
+async def createEntry(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:inOptional[int] = None,Level4:Optional[int] = None):
+    from supabase import create_client, Client
+    url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
+    key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
+    supabase: Client = create_client(url, key)
+    data, count = supabase.table('FileInfo').select({"PDF_ID":PDF_id}).execute()
+    return data['Chunk']
+
+
+@app.post("/generateEnd/")
+async def createEntry(PDF_id:int, content:str):
+    from supabase import create_client, Client
+    url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
+    key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
+    supabase: Client = create_client(url, key)
+    data, count = supabase.table('PDFInfo').upsert({'id': PDF_id, 'ChunkResult': content}).execute()
+
+
 
 @app.post("/countchars/")
 async def countWords(files: list[UploadFile]):
