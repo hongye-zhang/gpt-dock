@@ -33,7 +33,7 @@ async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Op
 
 
 @app.post("/generateBegin/")
-async def createEntry(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:inOptional[int] = None,Level4:Optional[int] = None):
+async def createEntry(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:Optional[int] = None,Level4:Optional[int] = None):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
