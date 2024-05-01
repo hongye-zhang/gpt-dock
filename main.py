@@ -108,7 +108,7 @@ async def create_upload_files(files: list[UploadFile]):
         data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents)
 
         res = supabase.storage.from_(bucket_name).get_public_url('user/' + f.filename)
-    return f"""
+    content = f"""
 <body>
 <title>Upload</title>
 <h1>Please copy the following Link:</h1>
@@ -116,6 +116,7 @@ async def create_upload_files(files: list[UploadFile]):
 </form>
 </body>
     """
+    return HTMLResponse(content=content)
 
 
 @app.get("/")
