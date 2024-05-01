@@ -1,6 +1,6 @@
 
 from typing import Annotated,Optional
-#from pdfparser.bearparsepdf import BearParsePDF
+from pdfparser.bearparsepdf import BearParsePDF
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
@@ -22,9 +22,9 @@ def parse(url):
     supabase: Client = create_client(url, key)
 
 
-    #pdf_parser = BearParsePDF(url)
-    #text = pdf_parser.parsePDFOutlineAndSplit()
-    #temp = json.loads(text)
+    pdf_parser = BearParsePDF(url)
+    text = pdf_parser.parsePDFOutlineAndSplit()
+    temp = json.loads(text)
 
 
 
