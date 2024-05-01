@@ -2,6 +2,5 @@ fastapi[all]
 pdfminer
 supabase
 
-operator
 fitz
 thefuzz
