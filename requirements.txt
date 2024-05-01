@@ -1,6 +1,6 @@
 fastapi[all]
 pdfminer
 supabase
-frontend
+
 PyMuPDF
 thefuzz
