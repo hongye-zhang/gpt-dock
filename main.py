@@ -101,11 +101,21 @@ async def create_upload_files(files: list[UploadFile]):
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
     bucket_name: str = "PDF storage"
+    res = "error"
     for f in files:
         contents = await f.read()
 
         data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents)
-    return {"filenames": [file.filename for file in files]}
+
+        res = supabase.storage.from_(bucket_name).get_public_url('user/' + f.filename)
+    return f"""
+<body>
+<title>Upload</title>
+<h1>Please copy the following Link:</h1>
+<b>{res}</b>
+</form>
+</body>
+    """
 
 
 @app.get("/")
