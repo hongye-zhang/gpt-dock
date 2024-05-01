@@ -1,5 +1,6 @@
 
 from typing import Annotated,Optional
+from pdfparser.bearparsepdf import BearParsePDF
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
@@ -12,6 +13,22 @@ from pdfminer.pdfpage import PDFPage
 
 app = FastAPI()
 
+#UTILITY FUNCTIONS
+def parse(url):
+    from supabase import create_client, Client
+
+    url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
+    key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
+    supabase: Client = create_client(url, key)
+
+
+    pdf_parser = BearParsePDF(url)
+    text = pdf_parser.parsePDFOutlineAndSplit()
+    temp = json.loads(text)
+
+
+
+# WEB ENDPOINTS
 @app.post("/createEntry/")
 async def createEntry(User: str, Filename:str, Url:str):
     from supabase import create_client, Client
@@ -20,7 +37,7 @@ async def createEntry(User: str, Filename:str, Url:str):
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
     data, count = supabase.table('FileInfo').insert({"User": User,"Filename": Filename,"Url": Url}).execute()
-
+    return data, count
 
 @app.post("/fillGenParams/")
 async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
@@ -33,7 +50,7 @@ async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Op
 
 
 @app.post("/generateBegin/")
-async def createEntry(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:Optional[int] = None,Level4:Optional[int] = None):
+async def generateStart(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:Optional[int] = None,Level4:Optional[int] = None):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
@@ -43,7 +60,7 @@ async def createEntry(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Op
 
 
 @app.post("/generateEnd/")
-async def createEntry(PDF_id:int, content:str):
+async def generateEnd(PDF_id:int, content:str):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
