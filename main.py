@@ -105,7 +105,7 @@ async def create_upload_files(files: list[UploadFile]):
     for f in files:
         contents = await f.read()
 
-        data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents)
+        data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents,file_options={"content-type": "File"})
 
         res = supabase.storage.from_(bucket_name).get_public_url('user/' + f.filename)
     content = f"""
