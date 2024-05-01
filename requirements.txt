@@ -1,9 +1,9 @@
 fastapi[all]
 pdfminer
 supabase
-json
+
 hashlib
-os
+
 re
 operator
 fitz
