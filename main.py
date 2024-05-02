@@ -10,7 +10,7 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 import requests
-
+from PyPDF2 import PdfFileReader
 app = FastAPI()
 
 #UTILITY FUNCTIONS
