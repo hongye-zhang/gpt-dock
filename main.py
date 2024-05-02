@@ -9,47 +9,42 @@ from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
-from urllib2 import Request, urlopen
-from pyPdf import PdfFileWriter, PdfFileReader
-from StringIO import StringIO
+import requests
 
 app = FastAPI()
 
 #UTILITY FUNCTIONS
-def parse(url,PDF_id):
+def parse(PDF_url,PDF_id):
     from supabase import create_client, Client
 
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
 
+    response = requests.get(PDF_url)
 
-    remoteFile = urlopen(Request(url)).read()
-    memoryFile = StringIO(remoteFile)
-    pdfFile = PdfFileReader(memoryFile)
-
-    pdf_parser = BearParsePDF(pdfFile)
+    pdf_parser = BearParsePDF(response)
     text = pdf_parser.parsePDFOutlineAndSplit()
     temp = json.loads(text)
     for i in temp:
         if i[0]==1:
-            data, count = supabase.table('FileInfo').insert({"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
+            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
 
         elif i[0] == 3:
             level1 = i[1][0]
-            data, count = supabase.table('FileInfo').insert({"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
+            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
 
 
         elif i[0] == 3:
             level1 = i[1][0]
             level2 = i[1][2]
-            data, count = supabase.table('FileInfo').insert({"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
+            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
 
         elif i[0] == 4:
             level1 = i[1][0]
             level2 = i[1][2]
             level3 = i[1][4]
-            data, count = supabase.table('FileInfo').insert({"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
+            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
 
 
 

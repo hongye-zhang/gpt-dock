@@ -4,3 +4,4 @@ supabase
 
 PyMuPDF
 thefuzz
+requests
