@@ -22,8 +22,9 @@ def parse(PDF_url,PDF_id):
     supabase: Client = create_client(url, key)
 
     response = requests.get(PDF_url)
-
-    pdf_parser = BearParsePDF(response)
+    file_like_object = io.BytesIO(response.content)
+    pdf = PdfFileReader(file_like_object)
+    pdf_parser = BearParsePDF(pdf)
     text = pdf_parser.parsePDFOutlineAndSplit()
     temp = json.loads(text)
     for i in temp:
