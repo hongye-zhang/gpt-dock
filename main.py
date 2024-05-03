@@ -10,7 +10,7 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 import requests
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 app = FastAPI()
 
 #UTILITY FUNCTIONS
@@ -23,7 +23,7 @@ def parse(PDF_url,PDF_id):
 
     response = requests.get(PDF_url)
     file_like_object = io.BytesIO(response.content)
-    pdf = PdfFileReader(file_like_object)
+    pdf = PdfReader(file_like_object)
     pdf_parser = BearParsePDF(pdf)
     text = pdf_parser.parsePDFOutlineAndSplit()
     temp = json.loads(text)
