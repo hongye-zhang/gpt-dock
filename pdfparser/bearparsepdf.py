@@ -29,9 +29,9 @@ class BearParsePDF:
     def __init__(self, pdf_filename, maintitle=None):
         self.pdf_filename = pdf_filename
         self.maintitle = maintitle
-        #if not os.path.exists(pdf_filename):
-         #   print('Cannot find the pdf file! ')
-         #   exit()
+        if not os.path.exists(pdf_filename):
+            print('Cannot find the pdf file! ')
+            exit()
 
         # members needed
         self.pdf_textsize = 0

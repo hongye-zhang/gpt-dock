@@ -25,44 +25,46 @@ def parse(PDF_url,PDF_id):
     supabase: Client = create_client(url, key)
 
     response = requests.get(url)
+    fd, path = tempfile.mkstemp(suffix=".pdf")
+    try:
 
     # Create a temporary file and write the content
-    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
-        tmp.write(response.content)
-        temp_filename = tmp.name
+        with os.fdopen(fd, 'wb') as tmp:
+            # Write data to file
+            tmp.write(response.content)
 
     # At this point, 'temp_filename' is the path of your saved pdf file
     # It's saved in a temporary directory and exists as a regular file as far as the OS is concerned
 
     # Use it in your function
-    pdf_parser = BearParsePDF(temp_filename)
+        pdf_parser = BearParsePDF(path)
 
     # Clean up the temporary file when you're done
 
 
-    text = pdf_parser.parsePDFOutlineAndSplit()
-    temp = json.loads(text)
-    for i in temp:
-        if i[0]==1:
-            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
+        text = pdf_parser.parsePDFOutlineAndSplit()
+        temp = json.loads(text)
+        for i in temp:
+            if i[0]==1:
+                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
 
-        elif i[0] == 3:
-            level1 = i[1][0]
-            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
+            elif i[0] == 3:
+                level1 = i[1][0]
+                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
 
 
-        elif i[0] == 3:
-            level1 = i[1][0]
-            level2 = i[1][2]
-            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
+            elif i[0] == 3:
+                level1 = i[1][0]
+                level2 = i[1][2]
+                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
 
-        elif i[0] == 4:
-            level1 = i[1][0]
-            level2 = i[1][2]
-            level3 = i[1][4]
-            data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
-
-    os.unlink(temp_filename)
+            elif i[0] == 4:
+                level1 = i[1][0]
+                level2 = i[1][2]
+                level3 = i[1][4]
+                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
+    finally:
+        os.unlink(path)
 
 
 # WEB ENDPOINTS
