@@ -11,6 +11,9 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 import requests
 from PyPDF2 import PdfReader
+import tempfile
+
+
 app = FastAPI()
 
 #UTILITY FUNCTIONS
@@ -21,10 +24,22 @@ def parse(PDF_url,PDF_id):
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
 
-    response = requests.get(PDF_url)
-    file_like_object = io.BytesIO(response.content)
-    pdf = PdfReader(file_like_object)
-    pdf_parser = BearParsePDF(pdf)
+    response = requests.get(url)
+
+    # Create a temporary file and write the content
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        tmp.write(response.content)
+        temp_filename = tmp.name
+
+    # At this point, 'temp_filename' is the path of your saved pdf file
+    # It's saved in a temporary directory and exists as a regular file as far as the OS is concerned
+
+    # Use it in your function
+    pdf_parser = BearParsePDF(temp_filename)
+
+    # Clean up the temporary file when you're done
+
+
     text = pdf_parser.parsePDFOutlineAndSplit()
     temp = json.loads(text)
     for i in temp:
@@ -47,6 +62,7 @@ def parse(PDF_url,PDF_id):
             level3 = i[1][4]
             data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
 
+    os.unlink(temp_filename)
 
 
 # WEB ENDPOINTS
