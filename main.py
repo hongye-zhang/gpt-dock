@@ -12,7 +12,7 @@ from pdfminer.pdfpage import PDFPage
 import requests
 from PyPDF2 import PdfReader
 import tempfile
-
+import os
 
 app = FastAPI()
 
