@@ -27,7 +27,7 @@ def parse(PDF_url,PDF_id):
     response = requests.get(url)
 
     # Create a temporary file and write the content
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
         tmp.write(response.content)
         temp_filename = tmp.name
 
