@@ -32,6 +32,8 @@ def parse(PDF_url,PDF_id):
         with os.fdopen(fd, 'wb') as tmp:
             # Write data to file
             tmp.write(response.content)
+        data = supabase.storage.from_("PDF storage").upload('user/' + 'tempPdf', fd.read(),
+                                                      file_options={"content-type": "application/pdf"})
 
     # At this point, 'temp_filename' is the path of your saved pdf file
     # It's saved in a temporary directory and exists as a regular file as far as the OS is concerned
