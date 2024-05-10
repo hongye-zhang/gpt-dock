@@ -32,7 +32,7 @@ def parse(PDF_url,PDF_id):
         with os.fdopen(fd, 'wb') as tmp:
             # Write data to file
             tmp.write(response.content)
-        data = supabase.storage.from_("PDF storage").upload('user/' + 'tempPdf', fd.read(),
+            data = supabase.storage.from_("PDF storage").upload('user/' + 'tempPdf', fd,
                                                       file_options={"content-type": "application/pdf"})
 
     # At this point, 'temp_filename' is the path of your saved pdf file
