@@ -1,7 +1,7 @@
 
 from typing import Annotated,Optional
 from pdfparser.bearparsepdf import BearParsePDF
-
+import math
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
 import io
