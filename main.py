@@ -35,8 +35,18 @@ def parse(PDF_url,PDF_id):
 
     # At this point, 'temp_filename' is the path of your saved pdf file
     # It's saved in a temporary directory and exists as a regular file as far as the OS is concerned
+        def convert_size(size_bytes):
+            if size_bytes == 0:
+                return "0B"
+            size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+            i = int(math.floor(math.log(size_bytes, 1024)))
+            p = math.pow(1024, i)
+            s = round(size_bytes / p, 2)
+            return "%s %s" % (s, size_name[i])
 
-    # Use it in your function
+        file_size = os.path.getsize(path)
+        print('The size of the file is: ', convert_size(file_size))
+        # Use it in your function
         pdf_parser = BearParsePDF(path)
 
     # Clean up the temporary file when you're done
