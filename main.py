@@ -58,25 +58,26 @@ def parse(PDF_url,PDF_id):
 
         text = pdf_parser.parsePDFOutlineAndSplit()
         temp = json.loads(text)
+        table = "PDFInfo"
         for i in temp:
             if i[0]==1:
-                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
+                data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2]}).execute()
 
             elif i[0] == 3:
                 level1 = i[1][0]
-                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
+                data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1}).execute()
 
 
             elif i[0] == 3:
                 level1 = i[1][0]
                 level2 = i[1][2]
-                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
+                data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2}).execute()
 
             elif i[0] == 4:
                 level1 = i[1][0]
                 level2 = i[1][2]
                 level3 = i[1][4]
-                data, count = supabase.table('FileInfo').insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
+                data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": i[2],"Level1": level1,"Level2": level2,"Level3": level3}).execute()
     finally:
         os.unlink(path)
 
