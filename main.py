@@ -49,7 +49,7 @@ def parse(PDF_url,PDF_id):
         file_size = os.path.getsize(path)
         print('The size of the file is: ', convert_size(file_size))
         # Use it in your function
-        try:
+        
         pdf_parser = BearParsePDF(path)
 
     # Clean up the temporary file when you're done
