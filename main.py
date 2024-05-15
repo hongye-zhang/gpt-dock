@@ -65,8 +65,9 @@ def parse(PDF_url,PDF_id):
 
     # Clean up the temporary file when you're done
 
-
+        print(pdf_parser.parsePDFMetaInfo())
         text = pdf_parser.parsePDFOutlineAndSplit()
+
         temp = json.loads(text)
         table = "PDFInfo"
         for i in temp:
