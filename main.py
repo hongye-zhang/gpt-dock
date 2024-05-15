@@ -72,19 +72,28 @@ def parse(PDF_url,PDF_id):
         for i in temp:
             if i[0]==1:
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2])}).execute()
+                print({"PDF_ID": "test", "Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2])})
 
             elif i[0] == 3:
                 level1,b,c = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1}).execute()
-
+                print(
+                    {"PDF_ID": "PDF_id", "Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]), "Level1": level1})
 
             elif i[0] == 3:
                 level1, level2, c = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1,"Level2": level2}).execute()
+                print(
+                    {"PDF_ID": 'PDF_id', "Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]), "Level1": level1,
+                     "Level2": level2})
 
             elif i[0] == 4:
                 level1, level2, level3 = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1,"Level2": level2,"Level3": level3}).execute()
+                print(
+                    {"PDF_ID": 'PDF_id', "Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]), "Level1": level1,
+                     "Level2": level2, "Level3": level3})
+
     finally:
         os.unlink(path)
 
@@ -100,7 +109,7 @@ async def createEntry(User: str, Filename:str, Url:str):
     data, count = supabase.table('FileInfo').insert({"User": User,"Filename": Filename,"Url": Url}).execute()
     id = data[1][0]['id']
     parse(Url,id)
-
+    return "success"
 
 @app.post("/fillGenParams/")
 async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
