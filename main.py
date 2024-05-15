@@ -109,7 +109,7 @@ async def createEntry(User: str, Filename:str, Url:str):
     data, count = supabase.table('FileInfo').insert({"User": User,"Filename": Filename,"Url": Url}).execute()
     id = data[1][0]['id']
     parse(Url,id)
-    return "success"
+    return "success: entry created"
 
 @app.post("/fillGenParams/")
 async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
