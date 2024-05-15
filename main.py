@@ -14,10 +14,21 @@ from PyPDF2 import PdfReader
 import tempfile
 import os
 import json
+import re
 
 app = FastAPI()
 
 #UTILITY FUNCTIONS
+
+def get_chapter_numbers(chapter_title):
+    match = re.match(r'(\d+)(\.(\d+))?(\.(\d+))?', chapter_title)
+    if match:
+        num1, _, num2, _, num3 = match.groups()
+        return int(num1) if num1 else None, int(num2) if num2 else None, int(num3) if num3 else None
+    else:
+        return None, None, None
+
+
 def parse(PDF_url,PDF_id):
     from supabase import create_client, Client
 
@@ -63,19 +74,16 @@ def parse(PDF_url,PDF_id):
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2])}).execute()
 
             elif i[0] == 3:
-                level1 = int(i[1][0])
+                level1,b,c = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1}).execute()
 
 
             elif i[0] == 3:
-                level1 = int(i[1][0])
-                level2 = int(i[1][2])
+                level1, level2, c = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1,"Level2": level2}).execute()
 
             elif i[0] == 4:
-                level1 = int(i[1][0])
-                level2 = int(i[1][2])
-                level3 = int(i[1][4])
+                level1, level2, level3 = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1,"Level2": level2,"Level3": level3}).execute()
     finally:
         os.unlink(path)
