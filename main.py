@@ -18,6 +18,17 @@ import re
 
 app = FastAPI()
 
+#LOCAL VARIABLES
+languages = [
+    "English", "Spanish", "French", "German", "Chinese",
+    "Russian", "Japanese", "Korean", "Italian", "Dutch",
+    "Portuguese", "Turkish", "Arabic", "Hindi", "Bengali",
+    "Indonesian", "Polish", "Romanian", "Swedish", "Danish",
+    "Norwegian", "Finnish", "Czech", "Hungarian", "Thai",
+    "Vietnamese", "Greek", "Hebrew", "Ukrainian", "Catalan"
+]
+
+
 #UTILITY FUNCTIONS
 
 def get_chapter_numbers(chapter_title):
@@ -75,7 +86,7 @@ def parse(PDF_url,PDF_id):
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2])}).execute()
                 print({"PDF_ID": "test", "Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2])})
 
-            elif i[0] == 3:
+            elif i[0] == 2:
                 level1,b,c = get_chapter_numbers(i[1])
                 data, count = supabase.table(table).insert({"PDF_ID": PDF_id,"Chunk": i[3], "SectionName": i[1], "CharCount": int(i[2]),"Level1": level1}).execute()
                 print(
@@ -107,38 +118,62 @@ async def createEntry(User: str, Filename:str, Url:str):
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
-    data, count = supabase.table('FileInfo').insert({"User": User,"Filename": Filename,"Url": Url}).execute()
+    try:
+        data, count = supabase.table('FileInfo').insert({"User": User,"Filename": Filename,"Url": Url}).execute()
+    except:
+        return "This pdf has already been uploaded, do you wish to continue from the previous session?"
     id = data[1][0]['id']
     parse(Url,id)
-    return "success: entry created"
+    data, count = supabase.table('PDFInfo').select("*").eq('PDF_ID', id).execute()
+    ret = []
+    for i in data[1]:
+        ret.append(i['SectionName'])
+    return json.dumps(ret)
 
 @app.post("/fillGenParams/")
-async def generationParameters(newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
+async def generationParameters(id:int,newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
     from supabase import create_client, Client
 
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
-    data, count = supabase.table('FileInfo').insert({"NewTitle": newTitle, "NewSubtitle": newSubTitle}).execute()
+    if newLanguage not in languages:
+        newLanguage = "English"
+    data, count = supabase.table('FileInfo').update({"NewTitle": newTitle, "NewSubtitle": newSubTitle, "NewAuthor": newaAuthor,"OutLanguage":newLanguage}).eq('id', id).execute()
+
+
 
 
 @app.post("/generateBegin/")
-async def generateStart(User: str,PDF_id:int,Level1:Optional[int] = None,Level2:Optional[int] = None,Level3:Optional[int] = None,Level4:Optional[int] = None):
+async def generateStart(PDF_id:int,lv1v1:int,lv1v2: int,lv2v1:Optional[int] = None,lv3v1:Optional[int] = None,lv2v2:Optional[int] = None,lv3v2:Optional[int]= None):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
-    data, count = supabase.table('FileInfo').select({"PDF_ID":PDF_id}).execute()
-    return data['Chunk']
+    ret = []
+    data, count = supabase.table('PDFInfo').select("*").eq('PDF_ID', PDF_id).execute()
+    if is_before([lv1v1, lv2v1, lv3v1], [lv1v2, lv2v2, lv3v2]):
+        for i in data[1]:
+            a = i["Level1"]
+            b = 0
+            if i["Level2"] != None:
+                b = i["Level2"]
+            c = 0
+            if i["Level3"] != None:
+                b = i["Level3"]
+            if not is_before([a, b, c], [lv1v1, lv2v1, lv3v1]) and is_before([a, b, c], [lv1v2, lv2v2, lv3v2]):
+                ret.append([i['SectionName'] + " " + i["Chunk"],i["id"]])
+    return json.dumps(ret)
+
 
 
 @app.post("/generateEnd/")
-async def generateEnd(PDF_id:int, content:str):
+async def generateEnd(id:int, content:str):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase: Client = create_client(url, key)
-    data, count = supabase.table('PDFInfo').upsert({'id': PDF_id, 'ChunkResult': content}).execute()
+    data, count = supabase.table('PDFInfo').update({"ChunkResult": content}).eq('id', id).execute()
 
 
 
