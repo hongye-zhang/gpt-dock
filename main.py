@@ -39,7 +39,20 @@ def get_chapter_numbers(chapter_title):
     else:
         return None, None, None
 
+def is_before(version1, version2):
+    # Split the versions by '.' and convert each part to int
+    v1 = list(map(int, version1))
+    v2 = list(map(int, version2))
 
+    # Append 0s to the end of the shorter version
+    len_diff = len(v1) - len(v2)
+    if len_diff < 0:
+        v1 += [0] * abs(len_diff)
+    elif len_diff > 0:
+        v2 += [0] * len_diff
+
+    # Compare versions
+    return v1 < v2
 def parse(PDF_url,PDF_id):
     from supabase import create_client, Client
 
@@ -145,7 +158,7 @@ async def generationParameters(id:int,newTitle : Optional[str] = None, newSubTit
 
 
 @app.post("/generateBegin/")
-async def generateStart(PDF_id:int,lv1v1:int,lv1v2: int,lv2v1:Optional[int] = None,lv3v1:Optional[int] = None,lv2v2:Optional[int] = None,lv3v2:Optional[int]= None):
+async def generateStart(PDF_id:int,lv1v1:int,lv1v2: int,lv2v1:Optional[int] = 0,lv3v1:Optional[int] = 0,lv2v2:Optional[int] = 0,lv3v2:Optional[int]= 0):
     from supabase import create_client, Client
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
@@ -156,10 +169,10 @@ async def generateStart(PDF_id:int,lv1v1:int,lv1v2: int,lv2v1:Optional[int] = No
         for i in data[1]:
             a = i["Level1"]
             b = 0
-            if i["Level2"] != None:
+            if i["Level2"] is not None:
                 b = i["Level2"]
             c = 0
-            if i["Level3"] != None:
+            if i["Level3"] is not None:
                 b = i["Level3"]
             if not is_before([a, b, c], [lv1v1, lv2v1, lv3v1]) and is_before([a, b, c], [lv1v2, lv2v2, lv3v2]):
                 ret.append([i['SectionName'] + " " + i["Chunk"],i["id"]])
