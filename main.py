@@ -139,6 +139,7 @@ async def createEntry(User: str, Filename:str, Url:str):
     parse(Url,id)
     data, count = supabase.table('PDFInfo').select("*").eq('PDF_ID', id).execute()
     ret = []
+    ret.append(id)
     for i in data[1]:
         ret.append(i['SectionName'])
     return json.dumps(ret)
