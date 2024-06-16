@@ -51,8 +51,17 @@ def is_before(version1, version2):
     elif len_diff > 0:
         v2 += [0] * len_diff
 
+
+
+
     # Compare versions
     return v1 < v2
+
+def is_same(version1, version2):
+    v1 = list(map(int, version1))
+    v2 = list(map(int, version2))
+    return v1 ==v2
+
 def parse(PDF_url,PDF_id):
     from supabase import create_client, Client
 
@@ -76,10 +85,10 @@ def parse(PDF_url,PDF_id):
             if size_bytes == 0:
                 return "0B"
             size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-            i = int(math.floor(math.log(size_bytes, 1024)))
-            p = math.pow(1024, i)
+            l = int(math.floor(math.log(size_bytes, 1024)))
+            p = math.pow(1024, l)
             s = round(size_bytes / p, 2)
-            return "%s %s" % (s, size_name[i])
+            return "%s %s" % (s, size_name[l])
 
         file_size = os.path.getsize(path)
         print('The size of the file is: ', convert_size(file_size))
@@ -144,6 +153,8 @@ async def createEntry(User: str, Filename:str, Url:str):
         ret.append(i['SectionName'])
     return json.dumps(ret)
 
+
+
 @app.post("/fillGenParams/")
 async def generationParameters(id:int,newTitle : Optional[str] = None, newSubTitle : Optional[str] = None,newaAuthor : Optional[str] = None,newLanguage : Optional[str] = None):
     from supabase import create_client, Client
@@ -177,6 +188,17 @@ async def generateStart(PDF_id:int,lv1v1:int,lv1v2: int,lv2v1:Optional[int] = 0,
                 b = i["Level3"]
             if not is_before([a, b, c], [lv1v1, lv2v1, lv3v1]) and is_before([a, b, c], [lv1v2, lv2v2, lv3v2]):
                 ret.append([i['SectionName'] + " " + i["Chunk"],i["id"]])
+    elif is_same([lv1v1, lv2v1, lv3v1], [lv1v2, lv2v2, lv3v2]):
+        for i in data[1]:
+            a = i["Level1"]
+            b = 0
+            if i["Level2"] is not None:
+                b = i["Level2"]
+            c = 0
+            if i["Level3"] is not None:
+                b = i["Level3"]
+            if a == lv1v1 and b == lv2v1 and c == lv3v1:
+                ret.append([i['SectionName'] + " " + i["Chunk"]])
     return json.dumps(ret)
 
 
@@ -193,6 +215,7 @@ async def generateEnd(id:int, content:str):
 
 @app.post("/countchars/")
 async def countWords(files: list[UploadFile]):
+    global chars_count
     for file in files:
         manager = PDFResourceManager()
         file_handle = io.StringIO()
