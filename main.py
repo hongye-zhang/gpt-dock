@@ -15,6 +15,7 @@ import tempfile
 import os
 import json
 import re
+import hashlib
 
 app = FastAPI()
 
@@ -30,6 +31,18 @@ languages = [
 
 
 #UTILITY FUNCTIONS
+
+
+
+def generate_file_hash(file_content):
+    """Generate a SHA-256 hash for the given file content."""
+    sha256_hash = hashlib.sha256()
+
+    # Assuming the file_content is in bytes
+    # If it's not the case, you should convert it to bytes
+    sha256_hash.update(file_content)
+
+    return sha256_hash.hexdigest()
 
 def get_chapter_numbers(chapter_title):
     match = re.match(r'(\d+)(\.(\d+))?(\.(\d+))?', chapter_title)
@@ -249,6 +262,7 @@ async def create_upload_files(files: list[UploadFile]):
     res = "error"
     for f in files:
         contents = await f.read()
+
 
         data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents,file_options={"content-type": "application/pdf"})
 
