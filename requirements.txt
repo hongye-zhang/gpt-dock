@@ -6,4 +6,3 @@ PyMuPDF
 thefuzz
 requests
 PyPDF2
-hashlib
