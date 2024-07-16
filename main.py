@@ -262,11 +262,11 @@ async def create_upload_files(files: list[UploadFile]):
     res = "error"
     for f in files:
         contents = await f.read()
+        filename = generate_file_hash(contents)
 
+        data = supabase.storage.from_(bucket_name).upload('user/' + filename, contents,file_options={"content-type": "application/pdf"})
 
-        data = supabase.storage.from_(bucket_name).upload('user/' + f.filename, contents,file_options={"content-type": "application/pdf"})
-
-        res = supabase.storage.from_(bucket_name).get_public_url('user/' + f.filename)
+        res = supabase.storage.from_(bucket_name).get_public_url('user/' + filename)
     content = f"""
 <body>
 <title>Upload</title>
