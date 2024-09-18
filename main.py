@@ -16,6 +16,7 @@ import os
 import json
 import re
 import hashlib
+from ppts import markdown_to_json,create_ppt_from_json
 
 app = FastAPI()
 
@@ -146,6 +147,14 @@ def parse(PDF_url,PDF_id):
 
 
 # WEB ENDPOINTS
+
+@app.post("/makePDF/")
+async def createEntry(text: str):
+    jsontext = markdown_to_json(text)
+
+    url = create_ppt_from_json(jsontext)
+    return url
+
 @app.post("/createEntry/")
 async def createEntry(User: str, Filename:str, Url:str):
     from supabase import create_client, Client

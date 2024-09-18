@@ -124,3 +124,4 @@ def compressDigital(oristr):
     compressstr = ''.join(x for x in oristr if x.isalpha() or x == ' ')
     return compressstr
 
+
