@@ -102,7 +102,7 @@ def create_ppt_from_json(json_data):
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
     key: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRka2xycnhkZ2d3c2JmZHZ0bHdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTc1MzA3MSwiZXhwIjoyMDI1MzI5MDcxfQ.a8mYI-pyEnmHqj7S30uEpOdIyjKhEbGPu62yTq961eE'
     supabase = create_client(url, key)
-    bucket_name: str = "PDF storage"
+    bucket_name: str = "pptx"
     data = supabase.storage.from_(bucket_name).upload('user/' + filename, contents,
                                                       file_options={
                                                           "content-type": "application/vnd.openxmlformats-officedocument.presentationml.presentation"})

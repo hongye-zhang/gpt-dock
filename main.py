@@ -148,7 +148,7 @@ def parse(PDF_url,PDF_id):
 
 # WEB ENDPOINTS
 
-@app.post("/makePDF/")
+@app.post("/makePPT/")
 async def createEntry(text: str):
     jsontext = markdown_to_json(text)
 
