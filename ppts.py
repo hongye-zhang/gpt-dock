@@ -96,7 +96,7 @@ def create_ppt_from_json(json_data):
             add_content_slide(prs, page["title"], page["content"])
 
     prs.save("result.pptx")
-    with open('result.pptx', 'r') as file:
+    with open('result.pptx', 'rb') as file:
         contents = file.read()
     filename = generate_file_hash(contents)
     url: str = 'https://tdklrrxdggwsbfdvtlws.supabase.co'
