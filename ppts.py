@@ -2,7 +2,7 @@ import json
 import hashlib
 from pptx import Presentation
 from pptx.util import Inches, Pt
-
+from supabase import create_client, Client
 
 def markdown_to_json(markdown_text):
     lines = markdown_text.split("\n")
