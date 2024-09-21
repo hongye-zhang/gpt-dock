@@ -150,7 +150,7 @@ def parse(PDF_url,PDF_id):
 
 @app.post("/makePPT/")
 async def makePPT(text: str):
-    from markdowntopptxen import MarkdownToPPTXConverter
+    from ppts import MarkdownToPPTXConverter
     converter = MarkdownToPPTXConverter(text, ppttemplate_path=".//templates//template-en.pptx")
     # 提取图片建议
     image_descriptions = converter.extract_image_suggestions_with_page_numbers(text)
