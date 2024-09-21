@@ -149,10 +149,17 @@ def parse(PDF_url,PDF_id):
 # WEB ENDPOINTS
 
 @app.post("/makePPT/")
-async def createEntry(text: str):
-    jsontext = markdown_to_json(text)
-
-    url = create_ppt_from_json(jsontext)
+async def makePPT(text: str):
+    from markdowntopptxen import MarkdownToPPTXConverter
+    converter = MarkdownToPPTXConverter(text, ppttemplate_path=".//templates//template-en.pptx")
+    # 提取图片建议
+    image_descriptions = converter.extract_image_suggestions_with_page_numbers(text)
+    # 解析Markdown并生成PPTX
+    converter.parse_markdown()
+    # 创建PPTX
+    converter.create_pptx(image_descriptions=image_descriptions)
+    # 保存PPTX
+    url = converter.save_pptx("output.pptx")
     return url
 
 @app.post("/createEntry/")
