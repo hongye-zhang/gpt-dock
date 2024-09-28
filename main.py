@@ -307,3 +307,92 @@ async def main():
 </body>
     """
     return HTMLResponse(content=content)
+
+@app.get("/privacypolicy/")
+async def privacypolicy():
+    content = """
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            color: #555;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Privacy Policy</h1>
+    <p>Welcome to the GPT Store! We value your privacy and are committed to protecting your personal data. This Privacy Policy outlines how we handle the information you provide when using our services, including generating PPTX files based on your input data.</p>
+
+    <h2>1. Information We Collect</h2>
+    <p>When you use our service, we may collect the following types of data:</p>
+    <ul>
+        <li><strong>Personal Information:</strong> This includes any personal details you provide, such as your name or email address, when creating an account or communicating with us.</li>
+        <li><strong>Input Data:</strong> The content you provide (e.g., text, images, or documents) to generate PPTX files.</li>
+        <li><strong>Usage Data:</strong> Information about how you use the platform, such as interaction with features, time spent, etc.</li>
+    </ul>
+
+    <h2>2. How We Use Your Data</h2>
+    <p>We use your data in the following ways:</p>
+    <ul>
+        <li><strong>Generate PPTX Files:</strong> Your input data is processed to create personalized PowerPoint presentations based on the information you submit.</li>
+        <li><strong>Improving Services:</strong> Usage data helps us enhance the platform, optimize performance, and introduce new features.</li>
+        <li><strong>Customer Support:</strong> We may use your contact information to respond to inquiries or resolve issues with the service.</li>
+    </ul>
+
+    <h2>3. Data Sharing</h2>
+    <p>We do not sell or share your personal data with third parties, except in the following situations:</p>
+    <ul>
+        <li>With your explicit consent.</li>
+        <li>When required by law or to comply with legal obligations.</li>
+        <li>To protect the security and integrity of our platform.</li>
+    </ul>
+
+    <h2>4. Data Security</h2>
+    <p>We implement strong security measures to protect your personal and input data. However, no system is entirely secure, and we cannot guarantee the absolute security of your information. Please ensure you use strong passwords and protect your account credentials.</p>
+
+    <h2>5. Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+        <li>Access the personal data we hold about you.</li>
+        <li>Request corrections or deletions of your data.</li>
+        <li>Withdraw consent to data processing at any time.</li>
+    </ul>
+
+    <h2>6. Changes to This Policy</h2>
+    <p>We may update this privacy policy from time to time to reflect changes in our practices or legal obligations. Please review this page periodically for updates.</p>
+
+    <h2>7. Contact Us</h2>
+    <p>If you have any questions about this privacy policy or how we handle your data, feel free to contact us at <strong>support@gptstore.com</strong>.</p>
+</div>
+
+</body>
+</html>
+    """
+    return HTMLResponse(content=content)
